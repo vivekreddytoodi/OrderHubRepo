@@ -1,9 +1,10 @@
-package com.example.demo;
+package applicationrunner;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SpringBootTest (classes = OrderHubApplication.class)
+
 class LugShareApplicationTests {
 
 	@Test
