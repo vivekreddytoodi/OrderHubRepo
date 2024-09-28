@@ -7,9 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@EnableAutoConfiguration
-@SpringBootConfiguration
-@ComponentScan
+@ComponentScan(basePackages = "applicationrunner")
 public class OrderHubApplication {
 
 	public static void main(String[] args) {
@@ -17,3 +15,4 @@ public class OrderHubApplication {
 	}
 
 }
+

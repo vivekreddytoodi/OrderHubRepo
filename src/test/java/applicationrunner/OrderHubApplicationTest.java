@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest (classes = OrderHubApplication.class)
 
-class LugShareApplicationTests {
+class OrderHubApplicationTest {
 
 	@Test
 	void contextLoads() {
