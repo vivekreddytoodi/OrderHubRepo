@@ -1,11 +1,16 @@
 package applicationrunner.security;
 
+import applicationrunner.model.Driver;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +19,14 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private String SECRET_KEY = "qwerty123";  // Store securely in environment variables
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
+
+    private Key getSigningKey() {
+        // Converting the secret key string to a SecretKey
+        byte[] keyBytes = SECRET_KEY.getBytes();
+        return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -37,18 +49,26 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(Driver driver) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        claims.put("name", driver.getName());
+        claims.put("userName", driver.getUsername());
+        claims.put("status", driver.getStatus());
+        claims.put("driverId", driver.getId());
+        claims.put("latitude", driver.getLatitude());
+        claims.put("longitude", driver.getLongitude());
+        return createToken(claims, driver.getUsername());
     }
+
+
 
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))  // 10 hours validity
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -57,4 +77,3 @@ public class JwtUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }
-

@@ -5,6 +5,7 @@ import applicationrunner.model.Order;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import applicationrunner.repository.DriverRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,10 +19,25 @@ public class DriverServiceImpl implements DriverService{
     @Autowired
     private DriverRepository driverRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder; // Inject PasswordEncoder
+
     @Override
     @Transactional
     public List<Driver> registerDriver(List<Driver> drivers) {
+        for (Driver driver : drivers) {
+            String encodedPassword = passwordEncoder.encode(driver.getPassword());
+            System.out.println("Encoded Password: " + encodedPassword);
+            driver.setPassword(encodedPassword);
+
+        }
         return new ArrayList<>(driverRepository.saveAll(drivers));
+    }
+
+    @Override
+    public Driver getDriverByUsername(String username) {
+        return driverRepository.findByUserName(username)
+                .orElseThrow(() -> new RuntimeException("Driver not found with username: " + username));
     }
 
     @Override
@@ -58,7 +74,6 @@ public class DriverServiceImpl implements DriverService{
 
     @Override
     public List<Order> findAvailableOrdersNearby(Long driverId, double radius) {
-        // Query logic to find orders within the radius
         return new ArrayList<>(); // Placeholder
     }
 }

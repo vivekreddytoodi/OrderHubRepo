@@ -10,6 +10,8 @@ import java.util.List;
 public interface DriverService  {
     List<Driver> registerDriver(List<Driver> drivers);
 
+    Driver getDriverByUsername(String username);
+
     List<Driver> getAllDrivers();
 
      Driver getDriverById(Long id);

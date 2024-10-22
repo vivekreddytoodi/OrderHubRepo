@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "drivers")
 @Data
-public class Driver {
+public class Driver implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +21,19 @@ public class Driver {
     @Column(nullable = false)
     @NotBlank(message = "Driver's name is required")
     private String name;
+
+    @Column(nullable = false)
+    @NotBlank(message = "Username is required")
+    private String username;
+
+    @Column(nullable = false)
+    @NotBlank(message = "Roles are required")
+    private String roles;
+
+    @Column(nullable = false)
+    @NotNull(message = "Password is required")
+    private String password;
+
 
     @Column(unique = true, nullable = false)
     @NotBlank(message = "Driver's license number is required")
@@ -60,5 +73,40 @@ public class Driver {
                 ", longitude=" + longitude +
                 ", status='" + status + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 }

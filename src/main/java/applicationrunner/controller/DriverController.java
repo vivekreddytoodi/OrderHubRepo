@@ -24,6 +24,12 @@ public class DriverController {
 
     }
 
+    @PostMapping("/login")
+    public String authenticateDriver(){
+        return "Welcome to my app";
+
+    }
+
     @PostMapping("/register")
     public ResponseEntity<List<Driver>> registerDrivers(@RequestBody List<Driver> drivers) {
         List<Driver> registeredDrivers = driverService.registerDriver(drivers);
